@@ -11,6 +11,11 @@ public class User implements Serializable {
   private String userId; // 用户名 or 用户 ID
   private String pwd; // 用户密码
 
+  public User(String userId, String pwd) {
+    this.userId = userId;
+    this.pwd = pwd;
+  }
+
   public String getUserId() {
     return userId;
   }
