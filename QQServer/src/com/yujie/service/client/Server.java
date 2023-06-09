@@ -37,6 +37,8 @@ public class Server {
     // 注意：端口可以写在配置文件中
     System.out.println("服务端在 9999 端口监听...");
     try {
+      Thread thread = new Thread(new SendMessageToAllService());
+      thread.start();
       ss = new ServerSocket(9999);
       while (true){ //当和某个客户端连接之后，会继续监听，因此使用 while 循环
         Socket socket = ss.accept();

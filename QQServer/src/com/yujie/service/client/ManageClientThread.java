@@ -15,6 +15,10 @@ import java.util.Set;
 public class ManageClientThread {
   private static HashMap<String, ServerConnectClientThread> hm = new HashMap<>();
 
+  public static Set<String> getKeySet() {
+    return hm.keySet();
+  }
+
   // 添加线程对象到集合中
   public static void addClientThread(String userId, ServerConnectClientThread scct){
     hm.put(userId, scct);
@@ -40,4 +44,5 @@ public class ManageClientThread {
     }
     return onlineUsers;
   }
+
 }

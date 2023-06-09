@@ -39,7 +39,7 @@ public class UserClientService {
       if(msg.getMessageType().equals(MessageType.MESSAGE_LOGIN_SUCCESS)){
         // 登录成功, 创建一个和服务器端保持通讯的线程,所以再去创建一个线程类 ClientConnectServerThread
         isLogin = true;
-        ClientConnectServerThread ccst = new ClientConnectServerThread(socket);
+        ClientConnectServerThread ccst = new ClientConnectServerThread(socket, user.getUserId());
         ccst.start();
         // 为了以后客户端的扩展, 将线程保存在集合中
         ManageClientConnectServerThread.addClientConnectServerThread(userId, ccst);

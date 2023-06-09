@@ -3,6 +3,7 @@ package com.yujie.client.service;
 import com.yujie.common.Message;
 import com.yujie.common.MessageType;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
@@ -12,12 +13,14 @@ import java.net.Socket;
  * @version 1.0
  */
 public class ClientConnectServerThread extends Thread {
+  private String userId;
   // 该线程需要持有 Socket
   private Socket socket;
 
   // 接收一个 socket 对象
-  public ClientConnectServerThread(Socket socket){
+  public ClientConnectServerThread(Socket socket, String userId){
     this.socket = socket;
+    this.userId = userId;
   }
 
   @Override
@@ -41,7 +44,17 @@ public class ClientConnectServerThread extends Thread {
           }
         } else if (msg.getMessageType().equals(MessageType.MESSAGE_COMM_MES)) {
           // 把服务器端转发的消息，显示到控制台即可
-          System.out.println("\n" + msg.getSender() + " 在 " + msg.getSendTime() + " 对 " + msg.getGetter() + " 说 " + msg.getContent());
+          System.out.println("\n" + msg.getSender() + " 对 " + msg.getGetter() + " 说 " + msg.getContent());
+        } else if(msg.getMessageType().equals(MessageType.MESSAGE_TO_ALL_MES)){
+          System.out.println("\n" + msg.getSender() + " 对 " + userId + " 说 " + msg.getContent());
+        } else if (msg.getMessageType().equals(MessageType.MESSAGE_FILE_MES)) {
+          System.out.println("\n" + msg.getSender() + " 给 " + msg.getGetter() + " 发文件: " + msg.getSrc() + " 到目录: " + msg.getDest());
+
+          // 取出 msg 对象的字节数组,通过文件输出流写出到磁盘
+          FileOutputStream fos = new FileOutputStream(msg.getDest());
+          fos.write(msg.getFileBytes());
+          fos.close();
+          System.out.println("\n 保存文件成功");
         } else {
           System.out.println("是其他类型的 msg，暂时不做处理");
         }

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * @author 余杰
@@ -60,8 +62,22 @@ public class ServerConnectClientThread extends Thread {
         } else if (msg.getMessageType().equals(MessageType.MESSAGE_COMM_MES)) {
           // 根据 message 获取 getter，然后再得到对应线程
           ObjectOutputStream oos = new ObjectOutputStream(ManageClientThread.getServerConnectClientThread(msg.getGetter()).getSocket().getOutputStream());
-          oos.writeObject(msg); // 转发，提示如果客户不在线，可以保存到数据库，这样就可以实现离线留言
-        } else if(msg.getMessageType().equals(MessageType.MESSAGE_CLIENT_EXIT)){
+          oos.writeObject(msg); // 转发给 getter，提示如果客户不在线，可以保存到数据库，这样就可以实现离线留言
+
+        } else if(msg.getMessageType().equals(MessageType.MESSAGE_TO_ALL_MES)){
+          // 转发给所有人，提示如果客户不在线，可以保存到数据库，这样就可以实现离线留言
+          Set<String> keySet = ManageClientThread.getKeySet();
+          for (String userId : keySet){
+            ObjectOutputStream oos = new ObjectOutputStream(ManageClientThread.getServerConnectClientThread(userId).getSocket().getOutputStream());
+            if (!userId.equals(msg.getSender())){
+              oos.writeObject(msg);
+            }
+          }
+        } else if (msg.getMessageType().equals(MessageType.MESSAGE_FILE_MES)){
+          // 根据 getter 获取对应线程, 将 message 对象转发
+          ObjectOutputStream oos = new ObjectOutputStream(ManageClientThread.getServerConnectClientThread(msg.getGetter()).getSocket().getOutputStream());
+          oos.writeObject(msg);
+        }else if(msg.getMessageType().equals(MessageType.MESSAGE_CLIENT_EXIT)){
           System.out.println(msg.getSender() + "想要退出");
           // 将这个客户端对应线程，从集合删除
           ManageClientThread.removeClientThread(msg.getSender());

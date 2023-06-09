@@ -1,6 +1,7 @@
 package com.yujie.client.view;
 
 import com.yujie.client.service.ClientSendMessage;
+import com.yujie.client.service.FileClientService;
 import com.yujie.client.service.UserClientService;
 import com.yujie.client.utils.Utility;
 
@@ -17,6 +18,8 @@ public class View {
   private UserClientService userClientService = new UserClientService();
   // 用于用户私聊群聊
   private ClientSendMessage clientSendMessage = new ClientSendMessage();
+  // 用于发送文件
+  private FileClientService fileClientService = new FileClientService();
 
   public static void main(String[] args) {
     View view = new View();
@@ -57,18 +60,28 @@ public class View {
                   // 写一个方法来获取在线用户列表
                   userClientService.sendUserList();
                   break;
-                case "2":
-                  System.out.println("群发消息");
+                case "2":{
+                  System.out.print("请输入想说的话: ");
+                  String content = Utility.readString(100);
+                  clientSendMessage.sendMessageToAll(userId, content);
                   break;
-                case "3":
+                }
+                case "3": {
                   System.out.print("请输入想聊天的用户名(在线): ");
                   String getter = Utility.readString(10);
                   System.out.print("请输入想说的话: ");
                   String content = Utility.readString(100);
                   clientSendMessage.sendMessageToOne(userId, getter, content);
                   break;
+                }
                 case "4":
-                  System.out.println("发送文件");
+                  System.out.println("请输入想要发送文件的用户号(在线): ");
+                  String getter = Utility.readString(10);
+                  System.out.println("请输入发送的文件完整路径(形式 d:\\xxx.jpg): ");
+                  String src = Utility.readString(100);
+                  System.out.println("请输入发送文件到对方的路径(形式 d:\\xxx.jpg): ");
+                  String dest = Utility.readString(100);
+                  fileClientService.sendFileToOne(userId, getter, src, dest);
                   break;
                 case "9":
                   loop = false;
